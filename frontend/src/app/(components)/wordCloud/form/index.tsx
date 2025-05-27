@@ -70,8 +70,8 @@ export default function WordCloudForm({ wordCloudData } : { wordCloudData: { tex
                 {wordCloudData.length > 0 && (
                     <Card className="w-full flex flex-row mt-8">
                         <CardHeader className="w-1/2">
-                         <CardTitle>Nuvem de Palavras (Keywords)</CardTitle>
-                            <div className="my-2 space-y-2">
+                            <div className="my-2 space-y-8">
+                                <CardTitle>Nuvem de Palavras (Keywords)</CardTitle>
                                 <FormField
                                 control={form.control}
                                 name="rotate"
@@ -210,6 +210,7 @@ export default function WordCloudForm({ wordCloudData } : { wordCloudData: { tex
                                 data={wordCloudData}
                                 fontSize={(word: any) => {
                                 if (fontMappWatch === "log") {
+                                    console.log("Log word:", word);
                                     return Math.log2(word.value + 1) * Number(logValueWatch); // Exemplo de mapeamento logarítmico
                                 } else {
                                     return word.value * Number(linValueWatch); // Example linear mapping

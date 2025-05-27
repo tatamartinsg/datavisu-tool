@@ -26,6 +26,7 @@ import WordCloud from "react-d3-cloud";
 import wordCloudServices from "@/services/word_cloud.services";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import WordCloudForm from "../../wordCloud/form";
+import WordCloudInfo from "../../wordCloud";
 
 const MAX_SIZE = 1000000 //1mb
 
@@ -85,8 +86,13 @@ export default function AddInputBibtexForm() {
   return (
     <div className="w-full">
       <div className="px-8">
-        <h1 className="text-2xl font-bold">Titulo</h1>
-        <p className="text-gray-400">Descrição</p>
+        <h1 className="text-2xl font-bold">Nuvem de palavras / Word Cloud</h1>
+        <p className="text-gray-400">
+          Esta página permite que você envie um arquivo BibTeX e 
+          gere uma nuvem de palavras a partir dos dados contidos nele. 
+          A nuvem de palavras é uma representação visual das palavras 
+          mais frequentes no arquivo, onde o tamanho de cada palavra indica sua frequência.
+        </p>
       </div>
       <div className="p-8">
         <Separator className="mb-8" /> 
@@ -152,6 +158,7 @@ export default function AddInputBibtexForm() {
                   <Separator className="my-4" />
                 </form>
             </Form>
+            <WordCloudInfo />
             <WordCloudForm wordCloudData={wordCloudData} />
         </div>
       </div>
