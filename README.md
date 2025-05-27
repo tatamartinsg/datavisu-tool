@@ -16,7 +16,7 @@ cada busca (no caso é como se fosse um .bib para cada busca, por isso o campo s
 aumente muito a dificuldade, é de salvar esses .bib num usuário e permitir a comparação entre diferentes arquivos
 ou visualizações que utilizem ambos os dados. Acho que essa seria uma boa saída para ver os resultados individuais
 e "coletivos".
-
+- Colocar o intervalo de tempo a ser considerado de forma variável.
 
 ### SE DER
 - Seria legal para, no caso de visualizações inadequadas (ex.: barchart com muitos slices) aparecer um warning em
