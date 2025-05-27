@@ -5,7 +5,7 @@ interface IWordCloudResponse{
     status: number;
     message: string;
     data?: IWordCloudDataResponse[];
-
+    year_data?: { year: string; count: number }[];
 }
 
 interface IWordCloudDataResponse{
@@ -39,6 +39,7 @@ class WordCloudServices{
             
             console.log("WordCloud Data: ", data);
             return {
+                year_data: data?.year_data,
                 data: data?.data,
                 status: 200,
                 message: "Podcast criado com sucesso",

@@ -210,7 +210,6 @@ export default function WordCloudForm({ wordCloudData } : { wordCloudData: { tex
                                 data={wordCloudData}
                                 fontSize={(word: any) => {
                                 if (fontMappWatch === "log") {
-                                    console.log("Log word:", word);
                                     return Math.log2(word.value + 1) * Number(logValueWatch); // Exemplo de mapeamento logarítmico
                                 } else {
                                     return word.value * Number(linValueWatch); // Example linear mapping

@@ -7,6 +7,15 @@ export default function WordCloudInfo() {
     <div className="w-full">
       <Card>
         <CardHeader>
+            <div className="mb-8">
+                <h1 className="text-2xl font-bold">Nuvem de palavras / Word Cloud</h1>
+                <p className="text-gray-400">
+                Esta página permite que você envie um arquivo BibTeX e 
+                gere uma nuvem de palavras a partir dos dados contidos nele. 
+                A nuvem de palavras é uma representação visual das palavras 
+                mais frequentes no arquivo, onde o tamanho de cada palavra indica sua frequência.
+                </p>
+            </div>
             <h2 className="text-lg font-semibold">Informações</h2>
             <p className="text-sm text-muted-foreground">
                 Leia atentamente as instruções a seguir sobre o uso da ferramenta de nuvem de palavras. 
@@ -40,25 +49,24 @@ export default function WordCloudInfo() {
                 <p className="text-sm">
                     Esse campo permite que você escolha como o tamanho das palavras será distribuído na nuvem.
                     Você pode optar por uma distribuição linear ou logarítimica.
-                    <ul className="list-disc pl-5 text-sm space-y-4 my-2">
-                        <li>
-                            <span className="font-semibold">Logarítmica: </span>O crescimento é suavizado. 
-                            Cresce rápido no início, depois desacelera. 
-                            Reduz o impacto das palavras extremamente frequentes, 
-                            dando mais visibilidade às menos frequentes. 
-                            Usa-se frequentemente e especialmente quando 
-                            há grande disparidade de frequência nas palavras.
-                        </li>
-                        <li>
-                            <span className="font-semibold">Linear: </span>
-                            O tamanho cresce diretamente proporcional ao valor (frequência). Portanto, 
-                            se uma palavra aparece 10 vezes, ela terá tamanho 10 * ValorEscolhido, logo
-                            se o ValorEscolhido é 10, o tamanho seria 10 * 10 = 100. Usa-se quando os 
-                            dados estão bem equilibrados, sem grandes discrepâncias.
-                        </li>
-                    </ul>
-
                 </p>
+                <ul className="list-disc pl-5 text-sm space-y-4 my-2">
+                    <li>
+                        <span className="font-semibold">Logarítmica: </span>O crescimento é suavizado. 
+                        Cresce rápido no início, depois desacelera. 
+                        Reduz o impacto das palavras extremamente frequentes, 
+                        dando mais visibilidade às menos frequentes. 
+                        Usa-se frequentemente e especialmente quando 
+                        há grande disparidade de frequência nas palavras.
+                    </li>
+                    <li>
+                        <span className="font-semibold">Linear: </span>
+                        O tamanho cresce diretamente proporcional ao valor (frequência). Portanto, 
+                        se uma palavra aparece 10 vezes, ela terá tamanho 10 * ValorEscolhido, logo
+                        se o ValorEscolhido é 10, o tamanho seria 10 * 10 = 100. Usa-se quando os 
+                        dados estão bem equilibrados, sem grandes discrepâncias.
+                    </li>
+                </ul>
             </div>
         </CardContent>
       </Card>

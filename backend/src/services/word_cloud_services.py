@@ -56,6 +56,26 @@ def getDataToCreateAWordCloud(request):
         for keyword, count in cleaned_counts.most_common(mostCommonParam)
     ]
 
+    years = list(range(2010, 2026))  # Anos de 2010 a 2025
+
+    year_counts = (
+        df['year']
+        .value_counts()               # Conta quantos itens tem em cada ano
+        .sort_index()                 # Ordena por ano
+        .reindex(years, fill_value=0) # Garante que todos os anos de 2010 a 2025 vão aparecer
+    )
+
+    print("Year Counts:")
+    for year, count in year_counts.items():
+        print(f"{year}: {count}")
+
+    year_data = [
+        {"year": str(year), "count": int(count)}
+        for year, count in year_counts.items()
+    ]
+
+
+
     if df is None:
         return {
             "status": 500,
@@ -67,7 +87,8 @@ def getDataToCreateAWordCloud(request):
     return {
         "status": 200,
         "message": "File processed successfully.",
-        "data": word_cloud_data
+        "data": word_cloud_data,
+        "year_data": year_data,
     }
     
     
