@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
@@ -18,6 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useEffect, useState, useMemo } from "react"
+
 
 
 interface GraphPieChartDonutProps {
@@ -26,9 +27,9 @@ interface GraphPieChartDonutProps {
 }
 
 export function GraphPieChartDonut({ chartData, chartConfig } : GraphPieChartDonutProps) {
-  const totalVisitors = React.useMemo(() => {
+  const totalVisitors = useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.papers, 0)
-  }, [])
+  }, [chartData])
 
   return (
     <Card className="w-[350px] flex flex-col">

@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -23,15 +23,18 @@ const MAX_SIZE = 1000000 //1mb
 
 const message = "Este campo é obrigatório";
 
-const bibFileSchema = z.object({
-  source: z.string().min(1, message).max(250, message),
+
+export const fileWithSourceSchema = z.object({
+  file: z.instanceof(File, { message: "Arquivo obrigatório" }),
+  source: z.string().min(1, "Fonte obrigatória"),
+});
+
+export const formSchema = z.object({
+  items: z.array(fileWithSourceSchema).min(1, "Adicione ao menos um arquivo"),
   quantity: z.coerce.number().optional(),
-  file: z
-    .instanceof(File, { message: "Arquivo inválido" })
-    .refine((file) => file.type === "application/x-bibtex" || file.name.endsWith(".bib"), {
-      message: "O arquivo deve ser um arquivo .bib",
-    }),
-})
+});
+
+export type FormData = z.infer<typeof formSchema>;
 
 interface AddInputBibtexFormProps {
   setWordCloudData: Dispatch<SetStateAction<{ text: string; value: number; }[]>>;
@@ -41,20 +44,23 @@ interface AddInputBibtexFormProps {
 export default function AddInputBibtexForm({ setWordCloudData, setYearData }: AddInputBibtexFormProps) {
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof bibFileSchema>>({
-      resolver: zodResolver(bibFileSchema),
-      defaultValues: {
-          file: undefined,
-          quantity: 0,
-          source: "",
-      },
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { 
+      items: [],
+      quantity: undefined, // Default value for quantity
+    },
   });
 
-  const getWordCloudData =  async (values: z.infer<typeof bibFileSchema>) => {
-    console.log(process.env.NEXT_PUBLIC_API_URL)
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "items",
+  });
+
+  const getWordCloudData =  async (values: FormData) => {
+    console.log(values)
     const response = await wordCloudServices.getWordCloudData({
-      file: values.file,
-      source: values.source,
+      items: values.items,
       quantity: values.quantity,
     });
 
@@ -70,19 +76,40 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData }: Ad
     }
   }
 
-  const onSubmit = (values: z.infer<typeof bibFileSchema>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    Array.from(files).forEach((file) => {
+      append({ file, source: "" });
+    });
+
+    // Reset file input to allow uploading same file again
+    e.target.value = "";
+  };
+
+  const onSubmit = (values: FormData) => {
     console.log("Dados do formulário:", values);
     setLoading(true);
     getWordCloudData(values)
       
   };
 
+  const itemsWatch = form.watch(`items`);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
+          <Input
+            type="file"
+            accept=".bib"
+            multiple
+            onChange={handleFileChange}
+          />
+
+           {/* <FormField
               control={form.control}
-              name="file"
+              name={``}
               render={({ field }) => (
                   <FormItem>
                     <FormLabel>Arquivo BibTeX</FormLabel>
@@ -98,13 +125,43 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData }: Ad
                     <FormMessage />
                   </FormItem>
               )}
-            />
-            <FormField
+            /> */}
+
+           {itemsWatch.length > 0 && fields.map((field, index) => (
+           
+              <div key={field.id} className="space-y-2">
+                <Separator key={field.id} className="my-4 font-bold" />
+                <FormField
+                  control={form.control}
+                  name={`items.${index}.source`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Escreva a fonte para o arquivo: {form.getValues(`items.${index}.file`)?.name || "Arquivo selecionado"} </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Fonte ex: Scopus, Scholar..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-red-500 p-0 opacity-60"
+                  onClick={() => remove(index)}
+                >
+                  Remover arquivo: {form.getValues(`items.${index}.file`)?.name || "Arquivo selecionado"}
+                </Button>
+              </div>
+            ))}
+          
+          <FormField
               control={form.control}
               name="quantity"
               render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantidade de palavras</FormLabel>
+                    <FormLabel>Quantidade de palavras para a Word Cloud</FormLabel>
                     <FormControl>
                         <Input
                           type="number"
@@ -118,23 +175,7 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData }: Ad
                   </FormItem>
               )}  
             />
-            <FormField
-              control={form.control}
-              name="source"
-              render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Source:</FormLabel>
-                    <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Digite a fonte do arquivo"
-                          {...field} 
-                        />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-              )}  
-            />
+           
             <Button loading={loading} variant={"default"} type="submit">Enviar</Button>
             <Separator className="my-4" />
           </form>

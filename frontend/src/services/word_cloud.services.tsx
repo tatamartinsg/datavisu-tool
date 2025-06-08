@@ -14,8 +14,10 @@ interface IWordCloudDataResponse{
 }
 
 interface IGetWordCloudInfoRequest{
-    file: File;
-    source: string;
+    items: {
+        file: File;
+        source: string;
+    }[];
     quantity?: number;
 }
 
@@ -23,8 +25,12 @@ class WordCloudServices{
     createFormData(request : IGetWordCloudInfoRequest){
         
         const formData = new FormData();
-        formData.append("file", request.file);
-        formData.append("source", request.source);
+
+        request.items.forEach((item, index) => {    
+            formData.append("files", item.file);
+            formData.append('sources', item.source);
+
+        })
 
         if(request?.quantity) formData.append("quantity", request.quantity.toString()); 
 
