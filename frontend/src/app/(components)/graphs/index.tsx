@@ -7,7 +7,6 @@ export default function GraphsInfo() {
 
   return (
     <div className="w-full">
-      
         <CardHeader>
           <div className="mb-8">
             <h1 className="text-2xl font-bold">Gerar gráfico</h1>
@@ -18,8 +17,7 @@ export default function GraphsInfo() {
           </div>
             <h2 className="text-lg font-semibold">Informações</h2>
             <p className="text-sm text-muted-foreground">
-                Leia atentamente as instruções a seguir sobre o uso da ferramenta de geração de gráficos.
-                
+                Leia atentamente as instruções a seguir sobre o uso da ferramenta de geração de gráficos
             </p>
         </CardHeader>
         <Separator className="m-4" />

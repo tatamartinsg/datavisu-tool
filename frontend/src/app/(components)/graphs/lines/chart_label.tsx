@@ -2,6 +2,23 @@
 
 import { TrendingUp } from "lucide-react"
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
+import { z } from "zod";
+import { Separator } from "@/components/ui/separator";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useFieldArray, useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { toast } from "sonner";
+import '@citation-js/plugin-bibtex';
 
 import {
   Card,
@@ -17,7 +34,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { useEffect, useState } from "react"
+
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -38,68 +55,134 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function GraphBarLineChartLabel({ chartData, chartConfig }: { chartData: { year: string; papers: number }[]; chartConfig: ChartConfig }) {
-    
+interface GraphProps {
+  chartData: { year: string; papers: number; }[];
+  chartConfig: ChartConfig;
+  lastYear?: number;
+  firstYear?: number;
+}
+
+export const formSchema = z.object({
+  lineColor: z.string(),
+  dotColor: z.string(),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+export function GraphBarLineChartLabel({ chartData, chartConfig, lastYear, firstYear }: GraphProps) {
+  const form = useForm<FormData>({
+      resolver: zodResolver(formSchema),
+      defaultValues: { 
+        lineColor: "#3b38ff",
+        dotColor: "#3b38ff",
+      },
+    });
+
+    const onSubmit = (data: FormData) => {
+      toast.success(`Color set to ${data.lineColor}`);
+      // Here you can handle the form submission, e.g., save the color to a database or state
+      console.log("Form submitted with color:", data.lineColor);
+    }
+  
   return (
-    <Card className="w-[600px]">
-      <CardHeader>
-        <CardTitle>Total Unique Publications per Year (All Sources)</CardTitle>
-        <CardDescription>2010 - 2025</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              top: 20,
-              left: 15,
-              right: 12,
-            }}
-            
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="year"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-            //   tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
-            />
-            <Line
-              dataKey="papers"
-              type="natural"
-              stroke="var(--color-papers)"
-              strokeWidth={2}
-              dot={{
-                fill: "var(--color-papers)",
-              }}
-              activeDot={{
-                r: 6,
-              }}
-            >
-              <LabelList
-                position="top"
-                offset={12}
-                className="fill-foreground"
-                fontSize={12}
-              />
-            </Line>
-          </LineChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        {/* <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+    <Card className="w-[1200px] mt-0 m-auto flex">
+      <section className="flex w-full">
+        <div className="w-[200px] p-4">
+          <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <section className="flex flex-col justify-center gap-4">
+                  <div>
+                    <p>Cor da linha:</p>
+                    <Input
+                        type="color"
+                        placeholder="0"
+                        onChange={(e) => {
+                          form.setValue("lineColor", e.target.value);
+                          console.log("Color changed to:", e.target.value);
+                        }}
+                        value={form.watch("lineColor")}
+                        min={0}
+                    />
+                  </div>
+                  <div>
+                    <p>Cor dos pontos:</p>
+                    <Input
+                        type="color"
+                        placeholder="0"
+                        onChange={(e) => {
+                          form.setValue("dotColor", e.target.value);
+                          console.log("Color changed to:", e.target.value);
+                        }}
+                        value={form.watch("dotColor")}
+                        min={0}
+                    />
+                  </div>
+                </section>
+              </form>
+          </Form>
         </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div> */}
-      </CardFooter>
+      <div className="w-full">
+        <Separator className="my-2" />
+        <CardHeader>
+          <CardTitle>Total de publicações únicas por ano</CardTitle>
+          <CardDescription>{firstYear} - {lastYear}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig}>
+            <LineChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                top: 20,
+                left: 15,
+                right: 12,
+              }}
+              
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="year"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+              //   tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="line" />}
+              />
+              <Line
+                dataKey="papers"
+                type="natural"
+                stroke={form.watch("lineColor") || "var(--color-papers)"}
+                strokeWidth={2}
+                dot={{
+                  fill: `${form.watch("dotColor") || "var(--color-papers)"} `,
+                }}
+                activeDot={{
+                  r: 6,
+                }}
+              >
+                <LabelList
+                  position="top"
+                  offset={12}
+                  className="fill-foreground"
+                  fontSize={12}
+                  />
+                </Line>
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+          <CardFooter className="flex-col items-start gap-2 text-sm">
+            {/* <div className="flex gap-2 font-medium leading-none">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="leading-none text-muted-foreground">
+              Showing total visitors for the last 6 months
+            </div> */}
+          </CardFooter>
+        </div>
+      </section>
     </Card>
   )
 }

@@ -24,23 +24,27 @@ import { useEffect, useState, useMemo } from "react"
 interface GraphPieChartDonutProps {
   chartData: { year: string; papers: number; }[];
   chartConfig: ChartConfig;
+  lastYear?: number;
+  firstYear?: number;
 }
 
-export function GraphPieChartDonut({ chartData, chartConfig } : GraphPieChartDonutProps) {
+export function GraphPieChartDonut({ chartData, chartConfig, firstYear, lastYear } : GraphPieChartDonutProps) {
   const totalVisitors = useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.papers, 0)
   }, [chartData])
 
   return (
-    <Card className="w-[350px] flex flex-col">
+    <Card className="w-[1000px] mt-0 m-auto flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Total Unique Publications per Year (All Sources)</CardTitle>
-        <CardDescription>2010 - 2025</CardDescription>
+        <CardTitle>Total de publicações únicas por ano</CardTitle>
+        <CardDescription>
+          {firstYear} - {lastYear}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square max-h-[400px]"
         >
           <PieChart>
             <ChartTooltip
