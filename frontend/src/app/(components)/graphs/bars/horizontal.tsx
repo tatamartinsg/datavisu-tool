@@ -42,15 +42,17 @@ const chartConfig2 = {
 interface GraphHorizontalProps {
   chartData: { year: string; papers: number; }[];
   chartConfig: ChartConfig;
+  lastYear?: number;
+  firstYear?: number;
 }
 
-export function GraphHorizontal({ chartData, chartConfig } : GraphHorizontalProps) {
+export function GraphHorizontal({ chartData, chartConfig, lastYear, firstYear } : GraphHorizontalProps) {
 
   return (
-    <Card className="w-[600px]">
+    <Card className="w-[1000px] mt-0 m-auto">
       <CardHeader>
-        <CardTitle>Total Unique Publications per Year (All Sources)</CardTitle>
-        <CardDescription>2010 - 2025</CardDescription>
+        <CardTitle>Total de publicações únicas por ano</CardTitle>
+        <CardDescription>{firstYear} - {lastYear}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

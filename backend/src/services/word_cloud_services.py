@@ -1,7 +1,7 @@
-import bibtexparser
 import uuid
 import pandas as pd
-from src.utils.file import getDataFromBibFile, convertDFToJson
+from src.utils.file import getDataFromMultipleBibFiles, convertDFToJson
+from src.services.year_graphs_services import getDataToCreateGraphs
 
 import nltk
 from nltk.stem import WordNetLemmatizer
@@ -31,7 +31,16 @@ def getDataToCreateAWordCloud(request):
     nltk.download('stopwords')
     nltk.download('wordnet')
 
-    df = getDataFromBibFile(request)
+    print("request", request.form)
+
+    df = getDataFromMultipleBibFiles(request)
+
+    if df is None:
+        return {
+            "status": 500,
+            "message": "An error occurred while processing the file.",
+            "data": None
+        }
 
     # 1) Build a flattened list of all cleaned keywords
     all_cleaned = []
@@ -56,40 +65,13 @@ def getDataToCreateAWordCloud(request):
         for keyword, count in cleaned_counts.most_common(mostCommonParam)
     ]
 
-    years = list(range(2010, 2026))  # Anos de 2010 a 2025
-
-    year_counts = (
-        df['year']
-        .value_counts()               # Conta quantos itens tem em cada ano
-        .sort_index()                 # Ordena por ano
-        .reindex(years, fill_value=0) # Garante que todos os anos de 2010 a 2025 vão aparecer
-    )
-
-    print("Year Counts:")
-    for year, count in year_counts.items():
-        print(f"{year}: {count}")
-
-    year_data = [
-        {"year": str(year), "count": int(count)}
-        for year, count in year_counts.items()
-    ]
-
-
-
-    if df is None:
-        return {
-            "status": 500,
-            "message": "An error occurred while processing the file.",
-            "data": None
-        }
+    firstYear = int(request.form.get('first_year'))
+    lastYear = int(request.form.get('last_year'))
+    year_data = getDataToCreateGraphs(df, firstYear, lastYear)
     
-    data = convertDFToJson(df)
     return {
         "status": 200,
         "message": "File processed successfully.",
         "data": word_cloud_data,
-        "year_data": year_data,
+        "year_data": year_data
     }
-    
-    
-    
