@@ -1,8 +1,8 @@
 import bibtexparser
 import uuid
 import pandas as pd
-from pathlib import Path
 
+from pathlib import Path
 
 def getDataFromMultipleBibFiles(request):
     if 'files' not in request.files:

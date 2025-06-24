@@ -15,9 +15,12 @@ import Image
  from "next/image";
 import { ChartColumnIncreasing, ChartPie, ChartSpline, Radar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ClassificationInfo from "../classification";
+
 export default function Container() {
     const [wordCloudData, setWordCloudData] = useState<{ text: string; value: number }[]>([]);
     const [yearData, setYearData] = useState<{ year: string; count: number }[]>([]);
+    const [categories, setCategories] = useState<{ categories: Record<string, string[]> }>({ categories: {} });
     const [firstYear, setFirstYear] = useState<number>(0);
     const [lastYear, setLastYear] = useState<number>(0);
     const [graph, setGraph] = useState<string>("");
@@ -64,11 +67,12 @@ export default function Container() {
     
     return(
         <section className="w-full">
-            <AddInputBibtexForm setYearData={setYearData} setWordCloudData={setWordCloudData} setLastYear={setLastYear} setFirstYear={setFirstYear} />
+            <AddInputBibtexForm setCategories={setCategories} setYearData={setYearData} setWordCloudData={setWordCloudData} setLastYear={setLastYear} setFirstYear={setFirstYear} />
             <Tabs defaultValue="wordCloud" className="w-full">
                 <TabsList className="space-x-2">
                     <TabsTrigger className="hover:bg-slate-50 cursor-pointer" value="wordCloud">Nuvem de palavras</TabsTrigger>
                     <TabsTrigger className="hover:bg-slate-50 cursor-pointer" value="graphs">Gráficos</TabsTrigger>
+                    <TabsTrigger className="hover:bg-slate-50 cursor-pointer" value="classification">Classificador</TabsTrigger>
                 </TabsList>
                 <TabsContent value="wordCloud">
                     <WordCloudInfo />
@@ -118,6 +122,9 @@ export default function Container() {
                         )}
                     </Card>
                 </TabsContent>
+                <TabsContent value="classification">
+                        <ClassificationInfo categories={categories.categories} />
+                    </TabsContent>
             </Tabs>
         </section>
     )

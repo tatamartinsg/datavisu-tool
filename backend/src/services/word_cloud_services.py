@@ -3,7 +3,7 @@ import pandas as pd
 from src.utils.file import getDataFromMultipleBibFiles, convertDFToJson
 from src.services.year_graphs_services import getDataToCreateGraphs
 
-import nltk
+
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from collections import Counter
@@ -27,21 +27,7 @@ def clean_and_lemmatize(keyword):
     # Lemmatize as noun
     return lemmatizer.lemmatize(kw, pos='n')
 
-def getDataToCreateAWordCloud(request):
-    nltk.download('stopwords')
-    nltk.download('wordnet')
-
-    print("request", request.form)
-
-    df = getDataFromMultipleBibFiles(request)
-
-    if df is None:
-        return {
-            "status": 500,
-            "message": "An error occurred while processing the file.",
-            "data": None
-        }
-
+def getDataToCreateAWordCloud(df, request):
     # 1) Build a flattened list of all cleaned keywords
     all_cleaned = []
     keyWordsWithDropna = df['keywords'].dropna().str.split(',')
@@ -65,13 +51,4 @@ def getDataToCreateAWordCloud(request):
         for keyword, count in cleaned_counts.most_common(mostCommonParam)
     ]
 
-    firstYear = int(request.form.get('first_year'))
-    lastYear = int(request.form.get('last_year'))
-    year_data = getDataToCreateGraphs(df, firstYear, lastYear)
-    
-    return {
-        "status": 200,
-        "message": "File processed successfully.",
-        "data": word_cloud_data,
-        "year_data": year_data
-    }
+    return word_cloud_data

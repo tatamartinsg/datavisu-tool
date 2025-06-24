@@ -17,7 +17,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import '@citation-js/plugin-bibtex';
 import wordCloudServices from "@/services/word_cloud.services";
-import { withMask } from 'use-mask-input';
 import { Label } from "recharts";
 import { Card } from "@/components/ui/card";
 
@@ -45,9 +44,10 @@ interface AddInputBibtexFormProps {
   setYearData: Dispatch<SetStateAction<{ year: string; count: number; }[]>>;
   setFirstYear: Dispatch<SetStateAction<number>>;
   setLastYear: Dispatch<SetStateAction<number>>;
+  setCategories: React.Dispatch<React.SetStateAction<{ categories: Record<string, string[]> }>>;
 }
 
-export default function AddInputBibtexForm({ setWordCloudData, setYearData, setFirstYear, setLastYear }: AddInputBibtexFormProps) {
+export default function AddInputBibtexForm({ setWordCloudData, setYearData, setFirstYear, setLastYear, setCategories }: AddInputBibtexFormProps) {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
 
@@ -56,7 +56,7 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData, setF
     defaultValues: { 
       items: [],
       quantity: 100, // Default value for quantity
-      firstYear: 2000, // Default value for first year
+      firstYear: 2010, // Default value for first year
       lastYear: 2025, // Default value for last year
     },
   });
@@ -76,11 +76,13 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData, setF
     });
 
     if (response.status === 200) {
-      console.log(response)
+      console.log("response !!!!!!!!=>", response)
+
       setWordCloudData(response.data || []);
       setYearData(response.year_data || []);
       setFirstYear(values.firstYear);
       setLastYear(values.lastYear);
+      setCategories({ categories: response.categories ?? {} })
       toast.success("Nuvem de palavras gerada com sucesso!");
       setLoading(false);
     } else {

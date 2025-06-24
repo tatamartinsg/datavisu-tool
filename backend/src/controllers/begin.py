@@ -2,7 +2,7 @@ from src import app
 from flask import make_response, jsonify, request
 from flask_cors import CORS
 from src.services.word_cloud_services import getSuccess
-from src.services.word_cloud_services import getDataToCreateAWordCloud
+from src.services.services import returnData
 
 CORS(app, 
      origins=["http://localhost:3000"], 
@@ -20,7 +20,7 @@ def get():
 def postBibFile():
     print("Post Bib File", request)
     # response = gameServices.getAllGamesServices()
-    response = getDataToCreateAWordCloud(request)
+    response = returnData(request)
     return make_response(
         jsonify(response)
     )

@@ -6,6 +6,7 @@ interface IWordCloudResponse{
     message: string;
     data?: IWordCloudDataResponse[];
     year_data?: { year: string; count: number }[];
+    categories?: Record<string, string[]>;
 }
 
 interface IWordCloudDataResponse{
@@ -51,10 +52,11 @@ class WordCloudServices{
                 year_data: data?.year_data,
                 data: data?.data,
                 status: 200,
-                message: "Podcast criado com sucesso",
+                message: "Dados coletados com sucesso",
+                categories: data?.categories
             }
         }catch{  
-            return httpErrorReturn(500, 'Não foi possível criar o podcast', undefined);
+            return httpErrorReturn(500, 'Não foi possível coletar os dados', undefined);
         }
     }
 }
