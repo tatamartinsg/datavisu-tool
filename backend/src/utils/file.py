@@ -31,7 +31,7 @@ def getDataFromMultipleBibFiles(request):
                 if key not in entries:
                     entries[key] = {
                         "title": entry.get("title", ""),
-                        "authors": entry.get("authors", ""),
+                        "authors": entry.get("author", ""),
                         "year": entry.get("year", ""),
                         "journal": entry.get("journal", ""),
                         "abstract": entry.get("abstract", ""),
@@ -57,7 +57,7 @@ def getDataFromMultipleBibFiles(request):
 
     # df['sources'] = df['sources'].apply(list)
 
-    print(df)
+    print("df",df)
     return df
 
 # def getDataFromBibFiles2(request):

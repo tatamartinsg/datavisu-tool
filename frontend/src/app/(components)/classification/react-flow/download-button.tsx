@@ -1,6 +1,7 @@
 import React from 'react';
 import { Panel } from '@xyflow/react';
 import { toPng } from 'html-to-image';
+import { Button } from '@/components/ui/button';
 
 function downloadImage(dataUrl: string) {
   const a = document.createElement('a');
@@ -17,7 +18,7 @@ function DownloadButton() {
 
     toPng(flow as HTMLElement, {
       cacheBust: true,
-      backgroundColor: '#1a365d',
+      backgroundColor: '#ffff',
       pixelRatio: 2, // mais qualidade
     })
       .then(downloadImage)
@@ -28,9 +29,9 @@ function DownloadButton() {
 
   return (
     <Panel position="top-right">
-      <button className="download-btn xy-theme__button" onClick={onClick}>
-        Download Image
-      </button>
+      <Button variant={"outline"} className="download-btn xy-theme__button" onClick={onClick}>
+        Baixar imagem
+      </Button>
     </Panel>
   );
 }

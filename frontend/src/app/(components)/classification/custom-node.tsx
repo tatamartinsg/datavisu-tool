@@ -1,9 +1,12 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Handle, Position } from '@xyflow/react';
  
-function CustomNode({ data }: any) {
+function CustomNode({ data, style  }: any) {
+  useEffect(() => { console.log(style)}, [style]);
   return (
-    <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 dark:bg-slate-800 dark:border-stone-600 dark:text-white">
+    //  
+    <div style={{ backgroundColor: data.color }} className={`px-4 py-2 shadow-md rounded-md border-2 border-stone-400 
+     dark:border-stone-500 dark:text-white `}>
       <div className="flex">
         {/* <div className="rounded-full w-12 h-12 flex justify-center items-center bg-gray-100">
           {data.emoji}

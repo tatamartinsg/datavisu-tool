@@ -45,9 +45,10 @@ interface AddInputBibtexFormProps {
   setFirstYear: Dispatch<SetStateAction<number>>;
   setLastYear: Dispatch<SetStateAction<number>>;
   setCategories: React.Dispatch<React.SetStateAction<{ categories: Record<string, string[]> }>>;
+  setAuthorData: Dispatch<SetStateAction<{ authors: string; count: number; }[]>>;
 }
 
-export default function AddInputBibtexForm({ setWordCloudData, setYearData, setFirstYear, setLastYear, setCategories }: AddInputBibtexFormProps) {
+export default function AddInputBibtexForm({ setWordCloudData, setYearData, setAuthorData, setFirstYear, setLastYear, setCategories }: AddInputBibtexFormProps) {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
 
@@ -77,7 +78,7 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData, setF
 
     if (response.status === 200) {
       console.log("response !!!!!!!!=>", response)
-
+      setAuthorData(response.authors_data || []);
       setWordCloudData(response.data || []);
       setYearData(response.year_data || []);
       setFirstYear(values.firstYear);
@@ -152,7 +153,7 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData, setF
                   <Button
                     type="button"
                     variant="link"
-                    className="text-red-500 p-0 opacity-60 dark:text-red-500 dark:opacity-80"
+                    className="text-red-500 p-0 opacity-60 dark:text-red-500 dark:opacity-80 w-40"
                     onClick={() => remove(index)}
                   >
                     Remover arquivo: {form.getValues(`items.${index}.file`)?.name || "Arquivo selecionado"}

@@ -7,6 +7,7 @@ interface IWordCloudResponse{
     data?: IWordCloudDataResponse[];
     year_data?: { year: string; count: number }[];
     categories?: Record<string, string[]>;
+    authors_data?: { authors: string; count: number }[];
 }
 
 interface IWordCloudDataResponse{
@@ -50,6 +51,7 @@ class WordCloudServices{
             console.log("WordCloud Data: ", data);
             return {
                 year_data: data?.year_data,
+                authors_data: data?.authors_data,
                 data: data?.data,
                 status: 200,
                 message: "Dados coletados com sucesso",

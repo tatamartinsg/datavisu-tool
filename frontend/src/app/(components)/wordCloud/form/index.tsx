@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import '@citation-js/plugin-bibtex';
 import WordCloud from "react-d3-cloud";
@@ -61,7 +61,46 @@ export default function WordCloudForm({ wordCloudData } : { wordCloudData: { tex
 
   const fontSizeMapper = (word: { value: number }) => Math.log2(word.value + 1) * 10;
   
-  const rotate = (word: any) => (~~(Math.random() * 2) * rotateWatch);
+//   const rotate = (word: any) => (~~(Math.random() * 2) * rotateWatch);
+
+  const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
+
+  const handleMouseOver = (event, word) => {
+    setTooltip({
+        visible: true,
+        text: `${word.text} (${word.value})`,
+        x: event.clientX,
+        y: event.clientY,
+    });
+    };
+
+    const handleMouseOut = () => {
+    setTooltip({ ...tooltip, visible: false });
+    };
+
+    const dataWithFixedRotationRef = useRef<{ text: string; value: number; rotate: number }[]>([]);
+
+    const [rotate, setRotate] = useState(0);
+
+    useEffect(() => {
+        setRotate((~~(Math.random() * 2) * rotateWatch));
+    }, [rotateWatch]);
+
+    const wordCloudElement = useMemo(() => (
+    <WordCloud
+        data={wordCloudData}
+        fontSize={(word: any) => fontMappWatch === "log"
+        ? Math.log2(word.value + 1) * Number(logValueWatch)
+        : word.value * Number(linValueWatch)
+        }
+        onWordMouseOver={handleMouseOver}
+        onWordMouseOut={handleMouseOut}
+        rotate={rotate}
+        width={800}
+        height={800}
+        padding={paddingWatch}
+    />
+    ), [wordCloudData, fontMappWatch, logValueWatch, linValueWatch, paddingWatch, rotateWatch]);
 
   return (
     <div className="w-full">
@@ -206,20 +245,25 @@ export default function WordCloudForm({ wordCloudData } : { wordCloudData: { tex
                     </CardHeader>
                     <CardContent className="w-1/2">
                         <div className="">
-                            <WordCloud
-                                data={wordCloudData}
-                                fontSize={(word: any) => {
-                                if (fontMappWatch === "log") {
-                                    return Math.log2(word.value + 1) * Number(logValueWatch); // Exemplo de mapeamento logarítmico
-                                } else {
-                                    return word.value * Number(linValueWatch); // Example linear mapping
-                                }
+                            {wordCloudElement}
+                            {tooltip.visible && (
+                                <div
+                                style={{
+                                    position: 'fixed',
+                                    top: tooltip.y + 10,
+                                    left: tooltip.x + 10,
+                                    background: 'rgba(0, 0, 0, 0.8)',
+                                    color: '#fff',
+                                    padding: '6px 10px',
+                                    borderRadius: '4px',
+                                    fontSize: '12px',
+                                    pointerEvents: 'none',
+                                    zIndex: 9999,
                                 }}
-                                rotate={rotate}
-                                width={800} // ou 500, teste o tamanho visual desejado
-                                height={800}
-                                padding={paddingWatch}
-                            />
+                                >
+                                {tooltip.text}
+                                </div>
+                            )}
                         </div>
                     </CardContent>
                     </Card>

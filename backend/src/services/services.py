@@ -1,6 +1,6 @@
 from src.services.classification_services import getDataToClassify
 from src.services.word_cloud_services import getDataToCreateAWordCloud
-from src.services.year_graphs_services import getDataToCreateGraphs
+from src.services.year_graphs_services import getDataByAuthors, getDataToCreateGraphs
 from src.utils.file import getDataFromMultipleBibFiles
 import nltk
 
@@ -18,7 +18,11 @@ def returnData(request):
             "message": "An error occurred while processing the file.",
             "data": None
         }
+    
+    df_exploded = df
     categories = getDataToClassify(df)
+
+
 
     print("categories", categories)
     
@@ -28,6 +32,7 @@ def returnData(request):
     firstYear = int(request.form.get('first_year'))
     lastYear = int(request.form.get('last_year'))
     year_data = getDataToCreateGraphs(newDf, firstYear, lastYear)
+    authors_data = getDataByAuthors(df_exploded)
 
     
     return {
@@ -35,5 +40,6 @@ def returnData(request):
         "message": "File processed successfully.",
         "data": word_cloud_data,
         "year_data": year_data,
-        "categories": categories
+        "categories": categories,
+        "authors_data": authors_data
     }
