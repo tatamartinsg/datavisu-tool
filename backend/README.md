@@ -1,3 +1,5 @@
+O Python deve estar na versão 3.11
+
 ## 1. Criar venv
 python -m venv venv
 
