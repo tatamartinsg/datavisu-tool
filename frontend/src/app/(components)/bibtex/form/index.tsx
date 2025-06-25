@@ -150,14 +150,16 @@ export default function AddInputBibtexForm({ setWordCloudData, setYearData, setA
                     )}
                   />
 
-                  <Button
+                  <div>
+                    <Button
                     type="button"
                     variant="link"
-                    className="text-red-500 p-0 opacity-60 dark:text-red-500 dark:opacity-80 w-40"
+                    className="text-red-500 p-0 opacity-60 dark:text-red-500 dark:opacity-80"
                     onClick={() => remove(index)}
                   >
                     Remover arquivo: {form.getValues(`items.${index}.file`)?.name || "Arquivo selecionado"}
                   </Button>
+                  </div>
                 </div>
               </div>
             ))}
